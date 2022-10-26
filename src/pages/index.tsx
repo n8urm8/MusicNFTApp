@@ -4,8 +4,13 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import { useState } from "react";
 import Web3 from "web3";
+import { AbiItem } from 'web3-utils';
+import { CollectibleDisplay } from "../components/collectibleDisplay";
 import { MagicConnector } from "../components/magicConnector";
 import MintNFT from "../components/mintNFT";
+import nftABI from '../utils/ABIs/mediaNFT.json';
+import { NFTManagerAddress } from '../utils/contractAddresses';
+import { useGetCollectionURI } from "../utils/contractFunctions";
 
 const polygonChain = {
   rpcUrl: 'https://polygon-rpc.com/',
@@ -26,10 +31,14 @@ const magic = typeof window != 'undefined' && new Magic('pk_live_52DD541C5579CC8
 // @ts-ignore
 const web3 = new Web3(magic.rpcProvider);
 
+const signerContract = new web3.eth.Contract(nftABI as unknown as AbiItem, NFTManagerAddress)
+
 const Home: NextPage = () => {
 
   const [account, setAccount] = useState<string | null>();
-  const shortAddress = `${account?.slice(0,4)}...${account?.slice(-4)}`
+  const shortAddress = `${account?.slice(0, 4)}...${account?.slice(-4)}`
+  
+  const testURI = useGetCollectionURI(0)
 
   const login = async () => {
     web3.eth
@@ -78,8 +87,9 @@ const Home: NextPage = () => {
         />
       </div>
       <div className="px-4 pt-1 flex-col text-gray-900">
+        <CollectibleDisplay account={account} signerContract={signerContract} />
         <div>
-          <MintNFT web3={web3} account={account} />
+          <MintNFT contract={signerContract} account={account} />
         </div>
       </div>
     </div>

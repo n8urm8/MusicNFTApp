@@ -6,11 +6,11 @@ import { useCreateCollection } from '../utils/contractFunctions';
 const APIKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDE3MTg1ZjVkNjgxZjkzMmM5NTRiYmJEN0E5NjUyOGM5RENjYWQ5MjUiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1NzcyMjg2MTY4NywibmFtZSI6InRlc3RpbmcifQ.18XDH9Ioyg601vbaxek23ohbBcHN9QigqH-ff--E7uA';
 
 interface MintNFTProps {
-  web3: any
+  contract: any
   account: string | null | undefined
 }
 
-const MintNFT: React.FC<MintNFTProps> = ({web3, account}) => {
+const MintNFT: React.FC<MintNFTProps> = ({contract, account}) => {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uploadedFileImage, setUploadedFileImage] = useState<File>();
@@ -21,13 +21,14 @@ const MintNFT: React.FC<MintNFTProps> = ({web3, account}) => {
   const [metaDataURL, setMetaDataURl] = useState('');
   const [txURL, setTxURL] = useState('');
   const [txStatus, setTxStatus] = useState('');
+  const [ipfsData, setIpfsData] = useState<object>()
   const [transacting, setTransacting] = useState(false)
 
   const songNameInputElement = useRef<HTMLInputElement>(null)
   const descriptionInputElement = useRef<HTMLInputElement>(null)
   const priceInputElement = useRef<HTMLInputElement>(null)
   const supplyInputElement = useRef<HTMLInputElement>(null)
-  console.log('metadata', imageView, audioView)
+  
 
     const handleFileUploadImage = (event: any) => {
       setTxStatus("");
@@ -44,24 +45,21 @@ const MintNFT: React.FC<MintNFTProps> = ({web3, account}) => {
       setAudioView(URL.createObjectURL(event.target.files[0]))
     }
 
-    const MintNFTToken = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>, uploadedFileImage: File | any, uploadedFileAudio: File | any) =>{
+    const UploadNFTData = async(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) =>{
       event.preventDefault();
-      const accountStr = account === null || account === undefined ? '' : account.toString()
-      const supply = Number(supplyInputElement.current?.value)
-      const price = Number(priceInputElement.current?.value)
-
      
       //1. upload NFT content via NFT.storage
-      const metaData = await uploadNFTContent(uploadedFileImage, uploadedFileAudio)
+      const metaData = await uploadNFTContent(uploadedFileImage!, uploadedFileAudio!)
+      setIpfsData(metaData)
       
 
       //2. Mint a NFT
-      const [txHash, error] = useCreateCollection(accountStr, web3, supply, metaData?.url, price)
-      if (error) console.log(error)
+      // const [txHash, error] = useCreateCollection(accountStr, web3, supply, metaData?.url, price)
+      // if (error) console.log(error)
       // const mintNFTTx = await sendTx(metaData);
 
       //3. preview the minted nft
-      previewNFT(metaData, txHash);
+      // previewNFT(metaData, txHash);
     }
 
     const uploadNFTContent = async(inputFileImage: File, inputFileAudio: File) =>{
@@ -76,7 +74,7 @@ const MintNFT: React.FC<MintNFTProps> = ({web3, account}) => {
               image: inputFileImage,
               properties: {audio: inputFileAudio}
             });
-            console.log("metaData", metaData)
+            // console.log("metaData", metaData)
             setMetaDataURl(getIPFSGatewayURL(metaData.url));
             return metaData;
 
@@ -85,28 +83,26 @@ const MintNFT: React.FC<MintNFTProps> = ({web3, account}) => {
             console.log(error);
         }
     }
-
-    // const sendTx = async(metadata: any) =>{
-    //     try {
-    //         setTxStatus("Sending mint transaction to Mumbai Blockchain.");
-    //         const provider = new ethers.providers.Web3Provider(window.ethereum);
-    //         const connectedContract = new ethers.Contract(
-    //             nftContractAddress,
-    //             MediaNFT,
-    //             signer
-    //         );
-    //         const mintNFTTx = await connectedContract.safeMint(metadata.url);
-    //         return mintNFTTx;
-    //     } catch (error) {
-    //         setErrorMessage("Failed to send tx to Mumbai.");
-    //         console.log(error);
-    //     }
-    // }
+    const { onCreateCollection } = useCreateCollection()
+    const sendCreateTx = async () =>{
+      setTxStatus("Sending...");
+      const accountStr = account === null || account === undefined ? '' : account.toString()
+      const supply = Number(supplyInputElement.current?.value)
+      const price = Number(priceInputElement.current?.value)
+      try {
+        await onCreateCollection(contract, accountStr, supply, ipfsData, price)
+      } catch (error) {
+          setErrorMessage("Failed to send tx to Mumbai.");
+          console.log(error);
+      } finally {
+        setTxStatus("Collection Created!")
+      }
+    }
 
     const previewNFT = (metaData: any, mintNFTTx: any) =>{
         const imgViewString = getIPFSGatewayURL(metaData.data.image.pathname);
         setImageView(imgViewString);
-        const audioViewString = getIPFSGatewayURL(metaData.data.video.pathname);
+        const audioViewString = getIPFSGatewayURL(metaData.data.properties.video.pathname);
         setAudioView(audioViewString)
         console.log("media url:", imgViewString, audioViewString);
         setMetaDataURl(getIPFSGatewayURL(metaData.url));
@@ -123,7 +119,7 @@ const MintNFT: React.FC<MintNFTProps> = ({web3, account}) => {
     return(
       <div className='bg-gray-100 p-4 rounded-md mt-2'>
         <form className='flex flex-col gap-3'>
-          <h3 className='font-bold text-xl'>Mint Collectible NFT</h3>
+          <h3 className='font-bold text-xl'>Create Collectible NFT</h3>
           <div className="flex flex-col mb-4">
             <label
               className="text-gray-700 text-sm font-bold mb-2"
@@ -195,7 +191,14 @@ const MintNFT: React.FC<MintNFTProps> = ({web3, account}) => {
           <button
             disabled={uploadedFileImage === undefined || uploadedFileAudio === undefined || !account || account === undefined}
             className="hover:bg-gray-500 disabled:hover:bg-gray-100 border rounded-md border-gray-200 px-2 py-1.5 text-gray-500 hover:text-gray-300 font-bold"
-            onClick={e => MintNFTToken(e, uploadedFileImage, uploadedFileAudio)}
+            onClick={e => UploadNFTData(e)}
+          >
+            {account ? 'Upload Collection' : 'Log in to create collection'}
+          </button>
+          <button
+            disabled={uploadedFileImage === undefined || uploadedFileAudio === undefined || !account || account === undefined}
+            className="hover:bg-gray-500 disabled:hover:bg-gray-100 border rounded-md border-gray-200 px-2 py-1.5 text-gray-500 hover:text-gray-300 font-bold"
+            onClick={sendCreateTx}
           >
             {account ? 'Mint Collection' : 'Log in to create collection'}
           </button>
@@ -204,7 +207,7 @@ const MintNFT: React.FC<MintNFTProps> = ({web3, account}) => {
         {imageView !== "" && <Image className='NFTImg' src={imageView} alt="NFT preview" height="100px" width="100px" />}
         {audioView !== "" &&
           <audio controls>
-            <source src={imageView} type="audio/mpeg" />
+            <source src={audioView} type="audio/mpeg" />
           </audio>
         }
 

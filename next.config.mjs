@@ -26,4 +26,20 @@ export default defineNextConfig({
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.ipfs.nftstorage.link',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'undefined.ipfs.nftstorage.link',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  }
 });
