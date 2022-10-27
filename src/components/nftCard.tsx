@@ -24,10 +24,9 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account })
   const [isLoading, nfturi] = useGetCollectionURI(id)
   const [nftData, setNftData] = useState<IPFSDataProps>({})
   const coverArtURL = nftData !== undefined && `https://${nftData.image?.slice(7, 66)}.ipfs.nftstorage.link/${nftData.image?.slice(66)}`
-  const audioURL = nftData !== undefined && `https://${nftData.properties?.audio.slice(7, 66)}.ipfs.nftstorage.link/${nftData.properties?.audio.slice(66)}`
+  const audioURL = nftData !== undefined && nftData !== null && `https://${nftData.properties?.audio.slice(7, 66)}.ipfs.nftstorage.link/${nftData.properties?.audio.slice(66)}`
   const weiPrice = useGetCollectionPrice(id)
   const price = Number(weiPrice[1])/ (10**18)
-  console.log('price', price)
 
   const { onMint } = useMint()
   const handleMint = async () => {
@@ -43,6 +42,8 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account })
 
   useEffect(() => {
     if (isLoading) return
+    if (nfturi === 'Check out live streams and music collectibles on Volume.com!') return
+    if (nfturi === undefined || nfturi === null) return
     const url = `https://${nfturi?.toString().slice(7).slice(0, -14)}.ipfs.nftstorage.link/metadata.json`
     setLoading(true)
     async function fetchData() {
@@ -53,10 +54,11 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account })
     } fetchData()
     setLoading(false)
   }, [nfturi])
-  if (nftData === undefined) return null
-  return (
-    <div className="rounded-md w-40 h-60 relative flex flex-col items-center justify-between p-1">
-      <Image src={coverArtURL.toString()} layout='fill' className="rounded-md object-cover" />
+  
+  return (<>
+    {nfturi !== 'Check out live streams and music collectibles on Volume.com!' && nftData !== undefined && 
+      <div className = "rounded-md w-40 h-60 relative flex flex-col items-center justify-between p-1" >
+      <Image src={coverArtURL.toString()} layout='fill' className="rounded-md object-cover" priority={true} />
       <div className=" font-bold text-gray-200 z-10">
         {nftData?.name} 
       </div>
@@ -66,6 +68,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account })
       <div className="border-gray-200 border rounded-md px-2 py-1 font-bold text-gray-200 z-10">
         <button disabled={account === null || account === undefined} onClick={handleMint}>Buy - {price}<span className="text-sm font-light">(matic)</span></button>
       </div>
-    </div>
+      </div>}
+    </>
   )
 }

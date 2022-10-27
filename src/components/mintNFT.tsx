@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { useRouter } from 'next/router';
 import { NFTStorage } from 'nft.storage';
 import { useRef, useState } from 'react';
 import { useCreateCollection } from '../utils/contractFunctions';
@@ -10,7 +11,8 @@ interface MintNFTProps {
   account: string | null | undefined
 }
 
-const MintNFT: React.FC<MintNFTProps> = ({contract, account}) => {
+const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
+  const router = useRouter()
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uploadedFileImage, setUploadedFileImage] = useState<File>();
@@ -51,7 +53,7 @@ const MintNFT: React.FC<MintNFTProps> = ({contract, account}) => {
       //1. upload NFT content via NFT.storage
       const metaData = await uploadNFTContent(uploadedFileImage!, uploadedFileAudio!)
       setIpfsData(metaData)
-      
+      console.log('metadata', ipfsData?.url)
 
       //2. Mint a NFT
       // const [txHash, error] = useCreateCollection(accountStr, web3, supply, metaData?.url, price)
@@ -76,6 +78,7 @@ const MintNFT: React.FC<MintNFTProps> = ({contract, account}) => {
             });
             // console.log("metaData", metaData)
             setMetaDataURl(getIPFSGatewayURL(metaData.url));
+            setTxStatus("Uploaded");
             return metaData;
 
         } catch (error) {
@@ -90,7 +93,7 @@ const MintNFT: React.FC<MintNFTProps> = ({contract, account}) => {
       const supply = Number(supplyInputElement.current?.value)
       const price = Number(priceInputElement.current?.value)
       try {
-        await onCreateCollection(contract, accountStr, supply, ipfsData, price)
+        await onCreateCollection(contract, accountStr, supply, ipfsData?.url, price)
       } catch (error) {
           setErrorMessage("Failed to send tx to Mumbai.");
           console.log(error);
@@ -188,20 +191,22 @@ const MintNFT: React.FC<MintNFTProps> = ({contract, account}) => {
               </div>
             </div>
           </div>
-          <button
+          {txStatus !== "Uploaded" &&
+            <button
             disabled={uploadedFileImage === undefined || uploadedFileAudio === undefined || !account || account === undefined}
             className="hover:bg-gray-500 disabled:hover:bg-gray-100 border rounded-md border-gray-200 px-2 py-1.5 text-gray-500 hover:text-gray-300 font-bold"
             onClick={e => UploadNFTData(e)}
           >
             {account ? 'Upload Collection' : 'Log in to create collection'}
-          </button>
-          <button
+          </button>}
+          {txStatus === "Uploaded" &&
+            <button
             disabled={uploadedFileImage === undefined || uploadedFileAudio === undefined || !account || account === undefined}
             className="hover:bg-gray-500 disabled:hover:bg-gray-100 border rounded-md border-gray-200 px-2 py-1.5 text-gray-500 hover:text-gray-300 font-bold"
             onClick={sendCreateTx}
           >
             {account ? 'Mint Collection' : 'Log in to create collection'}
-          </button>
+          </button>}
         </form>
         {txStatus && <p>{txStatus}</p>}
         {imageView !== "" && <Image className='NFTImg' src={imageView} alt="NFT preview" height="100px" width="100px" />}

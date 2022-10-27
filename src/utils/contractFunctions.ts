@@ -5,6 +5,7 @@ import { AbiItem } from 'web3-utils';
 import nftABI from './ABIs/mediaNFT.json';
 import { createCollection, mint } from './callHelpers';
 import { NFTManagerAddress } from './contractAddresses';
+import useRefresh from './useRefresh';
 
 const web3Provider = new Web3(new Web3.providers.HttpProvider('https://polygon-mumbai.g.alchemy.com/v2/v9tZMbd55QG9TpLMqrkDc1dQIzgZazV6'))
 
@@ -49,7 +50,7 @@ export const useGetCollectionPrice = (id: number) => {
     }
     fetch()
     setIsLoading(false)
-  }, [id])
+  }, [])
   return [isLoading, collectionPrice]
 }
 
@@ -65,13 +66,14 @@ export const useGetCollectionURI = (id: number) => {
     }
     fetch()
     setIsLoading(false)
-  }, [id])
+  }, [])
   return [isLoading, collectionURI]
 }
 
 export const useGetTotalCollections = () => {
   const [collections, setCollections] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const {fastRefresh} = useRefresh()
 
   useEffect(() => {
     setIsLoading(true)
@@ -81,6 +83,6 @@ export const useGetTotalCollections = () => {
     }
     fetch()
     setIsLoading(false)
-  }, [])
+  }, [fastRefresh])
   return [isLoading, collections]
 }
