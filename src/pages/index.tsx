@@ -11,16 +11,9 @@ import MintNFT from "../components/mintNFT";
 import nftABI from '../utils/ABIs/mediaNFT.json';
 import { NFTManagerAddress } from '../utils/contractAddresses';
 import { useGetCollectionURI } from "../utils/contractFunctions";
+import { mumbaiChain } from "../utils/networks";
 
-const polygonChain = {
-  rpcUrl: 'https://polygon-rpc.com/',
-  chainId: 137,
-}
 
-const mumbaiChain = {
-  rpcUrl: 'https://polygon-mumbai.g.alchemy.com/v2/v9tZMbd55QG9TpLMqrkDc1dQIzgZazV6',
-  chainId: 80001
-}
 
 const magic = typeof window != 'undefined' && new Magic('pk_live_52DD541C5579CC8C', {
   network: mumbaiChain,
