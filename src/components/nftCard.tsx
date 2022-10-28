@@ -58,7 +58,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account })
   return (<>
     {nfturi !== 'Check out live streams and music collectibles on Volume.com!' && nftData !== undefined && 
       <div className = "rounded-md w-40 h-60 relative flex flex-col items-center justify-between p-1" >
-      <Image src={coverArtURL.toString()} layout='fill' className="rounded-md object-cover" priority={true} />
+      {nfturi && <Image src={coverArtURL.toString()} layout='fill' className="rounded-md object-cover" priority={true} />}
       <div className=" font-bold text-gray-200 z-10">
         {nftData?.name} 
       </div>

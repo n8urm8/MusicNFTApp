@@ -8,6 +8,7 @@ import { AbiItem } from 'web3-utils';
 import { CollectibleDisplay } from "../components/collectibleDisplay";
 import { MagicConnector } from "../components/magicConnector";
 import MintNFT from "../components/mintNFT";
+import { LoginComponent } from "../components/paperCheckout";
 import nftABI from '../utils/ABIs/mediaNFT.json';
 import { NFTManagerAddress } from '../utils/contractAddresses';
 import { useGetCollectionURI } from "../utils/contractFunctions";
@@ -71,6 +72,7 @@ const Home: NextPage = () => {
         <h1 className="text-3xl font-extrabold leading-normal text-gray-850 ">
           Chain <span className="text-gray-400">Beatz</span>
         </h1>
+        <LoginComponent />
         <MagicConnector
           shortAddress={shortAddress}
           account={account}

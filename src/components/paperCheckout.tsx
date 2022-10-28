@@ -1,4 +1,4 @@
-import { LoginWithPaper, PaperSDKProvider } from "@paperxyz/react-client-sdk";
+import { PaperSDKProvider } from "@paperxyz/react-client-sdk";
 
 export function LoginComponent() {
   const onSuccessLogin = async (code: string) => {
@@ -15,11 +15,13 @@ export function LoginComponent() {
       throw new Error("Failed to get user token");
     }
     const { userToken } = await resp.json();
+    console.log('user token', userToken)
+    return userToken
   };
   // Ensure that you have a PaperSDKProvider set-up with the proper chain name and client Id.
   return (
-    <PaperSDKProvider clientId="Your_client_id_here" chainName="Polygon">
-      <LoginWithPaper onSuccess={onSuccessLogin} />
+    <PaperSDKProvider clientId="5b224302-b031-4f54-847a-cc4a97f6e9e6" chainName="Mumbai">
+      {/* <LoginWithPaper onSuccess={onSuccessLogin} /> */}
     </PaperSDKProvider>
   )
 }

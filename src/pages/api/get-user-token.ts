@@ -14,11 +14,11 @@ export default async function handler(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: "Bearer <YOUR-API-SECRET-KEY>",
+      Authorization: "Bearer e3d9e9da-612f-49ee-8058-a7d51eb1374a",
     },
     body: JSON.stringify({
       code,
-      clientId: "<YOUR-CLIENT-ID>",
+      clientId: "5b224302-b031-4f54-847a-cc4a97f6e9e6",
     }),
   });
 
