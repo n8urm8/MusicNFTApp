@@ -1,4 +1,4 @@
-import Image from "next/image"
+import Image from 'next/image'
 import { useEffect, useState } from "react"
 import { useGetCollectionPrice, useGetCollectionURI, useMint } from "../utils/contractFunctions"
 import { PlayButton } from "./playButton"
@@ -23,7 +23,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account })
   const [minting, setMinting] = useState(false)
   const [isLoading, nfturi] = useGetCollectionURI(id)
   const [nftData, setNftData] = useState<IPFSDataProps>({})
-  const coverArtURL = nftData !== undefined && `https://${nftData.image?.slice(7, 66)}.ipfs.nftstorage.link/${nftData.image?.slice(66)}`
+  const [coverArtURL, setCoverArtURL] = useState('')
   const audioURL = nftData !== undefined && nftData !== null && `https://${nftData.properties?.audio.slice(7, 66)}.ipfs.nftstorage.link/${nftData.properties?.audio.slice(66)}`
   const weiPrice = useGetCollectionPrice(id)
   const price = Number(weiPrice[1])/ (10**18)
@@ -41,24 +41,24 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account })
   }
 
   useEffect(() => {
-    if (isLoading) return
-    if (nfturi === 'Check out live streams and music collectibles on Volume.com!') return
-    if (nfturi === undefined || nfturi === null) return
+    if (!isLoading) {
     const url = `https://${nfturi?.toString().slice(7).slice(0, -14)}.ipfs.nftstorage.link/metadata.json`
-    setLoading(true)
+      setLoading(true)
     async function fetchData() {
-      if (url === 'https://.ipfs.nftstorage.link/metadata.json') return
+      if (url === 'https://.ipfs.nftstorage.link/metadata.json' || url === 'https://undefined.ipfs.nftstorage.link/undefined' || nfturi === '') return 
       const response = await fetch(url)
       const data = await response.json()
       setNftData(data)
+      setCoverArtURL(`https://${data.image?.slice(7, 66)}.ipfs.nftstorage.link/${data.image?.slice(66)}`)
     } fetchData()
-    setLoading(false)
+      setLoading(false)
+    };
   }, [nfturi])
   
   return (<>
     {nfturi !== 'Check out live streams and music collectibles on Volume.com!' && nftData !== undefined && 
       <div className = "rounded-md w-40 h-60 relative flex flex-col items-center justify-between p-1" >
-      <Image src={coverArtURL.toString()} layout='fill' className="rounded-md object-cover" priority={true} />
+      <Image src={coverArtURL} layout='fill' className="rounded-md object-cover" priority={true} />
       <div className=" font-bold text-gray-200 z-10">
         {nftData?.name} 
       </div>
