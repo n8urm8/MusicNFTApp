@@ -1,27 +1,62 @@
-import { PaperSDKProvider } from "@paperxyz/react-client-sdk";
+import { CheckoutWithCard } from "@paperxyz/react-client-sdk";
+import { useState } from "react";
 
-export function LoginComponent() {
-  const onSuccessLogin = async (code: string) => {
-    // code is the temporary access code that you can swap for a permenant user access token on your backend
-    const resp = await fetch("/api/get-user-token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        code,
-      }),
-    });
-    if (resp.status !== 200) {
-      console.log("resp", resp);
-      throw new Error("Failed to get user token");
-    }
-    const { userToken } = await resp.json();
-    console.log('user token', userToken)
-    return userToken
+export const PaperCheckout = ({ account, id }) => {
+  // need to fix this to accept correct params, hide api key. Returns sdkClientSecret
+  const options = {
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      'content-type': 'application/json',
+      // hide this key
+      Authorization: 'Bearer e3d9e9da-612f-49ee-8058-a7d51eb1374a'
+    },
+    body: JSON.stringify({
+      quantity: 1,
+      metadata: {},
+      expiresInMinutes: 15,
+      usePaperKey: false,
+      hideApplePayGooglePay: true,
+      sendEmailOnTransferSucceeded: true,
+      contractId: 'f3a6fbe2-a394-41b6-9b38-49f01ef79bae',
+      //pass in account
+      walletAddress: account,
+      // pass in email, get this somehow...
+      email: 'email@fix.this',
+      mintMethod: {
+        name: 'mint',
+        // update args id
+        args: { _to: '$WALLET', _id: id, _amount: 1 },
+        // update payment value
+        payment: {value: '0.001' , currency: 'MATIC'}
+      },
+      feeBearer: 'BUYER'
+    })
   };
-  // Ensure that you have a PaperSDKProvider set-up with the proper chain name and client Id.
+  const [clientSecret, setClientSecret] = useState()
+  const getClientSecret = () => {
+    fetch('https://paper.xyz/api/2022-08-12/checkout-sdk-intent', options)
+      .then(response => response.json())
+      .then(response => setClientSecret(response.toString()))
+      .catch(err => console.error(err));
+    // return clientSecret
+  }
+
   return (
-    <PaperSDKProvider clientId="5b224302-b031-4f54-847a-cc4a97f6e9e6" chainName="Mumbai">
-      {/* <LoginWithPaper onSuccess={onSuccessLogin} /> */}
-    </PaperSDKProvider>
+    <>
+      <button onClick={getClientSecret}>Generate Intent</button>
+      {clientSecret !== undefined && <CheckoutWithCard
+        sdkClientSecret={clientSecret}
+        onPaymentSuccess={(result) => { console.log('success:', result) }}
+        onReview={(result) => { console.log('review:', result) }}
+        onError={(error) => { console.log('error:', error) }}
+        options={{
+            colorBackground: '#121212',
+            colorPrimary: '#19A8D6',
+            colorText: '#f0f0f0',
+            borderRadius: 15,
+        }}
+      />}
+    </>
   )
 }
