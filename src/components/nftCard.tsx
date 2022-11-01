@@ -1,6 +1,7 @@
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { useGetCollectionCreator, useGetCollectionCurrentSupply, useGetCollectionMaxSupply, useGetCollectionPrice, useGetCollectionURI, useMint } from "../utils/contractFunctions"
+import { Modal } from "./modal"
 import { PaperCheckout } from "./paperCheckout"
 import { PlayButton } from "./playButton"
 
@@ -20,6 +21,8 @@ interface IPFSDataProps {
 }
 
 export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account }) => {
+
+  const [purchaseCompleted, setPurchaseCompleted] = useState(false)
   const [loading, setLoading] = useState(true)
   const [minting, setMinting] = useState(false)
   const [isLoading, nfturi] = useGetCollectionURI(id)
@@ -41,6 +44,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account })
       console.log(error);
     } finally {
       setMinting(false)
+      setPurchaseCompleted(true)
     }
   }
 
@@ -80,9 +84,21 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account })
                 <p className="bold">{price}</p>
               </div>
             </div>
-            <div className="flex flex-row gap-1">
-              <PaperCheckout account={account} id={id} method="mint" cost={price} />
-              <button className="primary" disabled={account === null || account === undefined || minting} onClick={handleMint}>Buy<span className="text-sm font-light">(matic)</span></button>
+            <div className="flex flex-row w-1/2">
+              <Modal header="Purchase" openButtonText="Buy">
+                <div className="flex flex-col gap-2 items-center w-80">
+                  {!purchaseCompleted ? <>
+                    <PaperCheckout onComplete={() => setPurchaseCompleted(true)} account={account} id={id} method="mint" cost={price}>Buy with CC</PaperCheckout>
+                    <p>or</p>
+                    <button className="primary w-full" disabled={account === null || account === undefined || minting} onClick={handleMint}>
+                      Buy with Crypto
+                    </button>
+                  </>
+                    :
+                    <p>Thank you for your purchase!</p>
+                  }
+                </div>  
+              </Modal>
             </div>
           </div>
         </div>

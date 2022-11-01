@@ -1,4 +1,5 @@
 import { CheckoutWithCard } from "@paperxyz/react-client-sdk";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 interface PaperCheckoutProps {
@@ -10,9 +11,12 @@ interface PaperCheckoutProps {
     uri: string
     maxSupply: number
   }
+  children: React.ReactNode
+  onComplete: () => void
 }
 
-export const PaperCheckout: React.FC<PaperCheckoutProps> = ({ account, id, cost, method, nftData }) => {
+export const PaperCheckout: React.FC<PaperCheckoutProps> = ({ account, id, cost, method, nftData, children, onComplete }) => {
+  const router = useRouter()
   const methodMint = {
     name: 'mint',
     // update args id
@@ -72,27 +76,31 @@ export const PaperCheckout: React.FC<PaperCheckoutProps> = ({ account, id, cost,
   const getClientSecret = () => {
     fetch('https://paper.xyz/api/2022-08-12/checkout-sdk-intent', options)
       .then(response => response.json())
-      .then(response => { setClientSecret(response.sdkClientSecret); console.log('response', response.sdkClientSecret)})
+      .then(response => { setClientSecret(response.sdkClientSecret); console.log('response', response.sdkClientSecret) })
       .catch(err => console.error(err));
     // return clientSecret
   }
 
   return (
     <>
-      <button disabled={!account} className="primary" onClick={getClientSecret}>Buy CC</button>
-      {clientSecret !== undefined && <div className="fixed z-10 p-2 top-1/3 inset-0 bg-gray-600 bg-opacity-50 h-full w-full">
-        <CheckoutWithCard
-        sdkClientSecret={clientSecret}
-        onPaymentSuccess={(result) => { console.log('success:', result) }}
-        onReview={(result) => { console.log('review:', result) }}
-        onError={(error) => { console.log('error:', error) }}
-        options={{
-            colorBackground: '#EFEFEF',
-            colorPrimary: '#3204F5',
-            colorText: '#000000',
-            borderRadius: 16,
-        }}
-      /></div>}
+      {clientSecret === undefined ?
+        <button disabled={!account} className="primary w-full" onClick={getClientSecret}>{children}</button>
+        :
+        <div className="w-full">
+          <CheckoutWithCard
+            sdkClientSecret={clientSecret}
+            onPaymentSuccess={(result) => { onComplete(); router.push('/') }}
+            onReview={(result) => { console.log('review:', result) }}
+            onError={(error) => { console.log('error:', error) }}
+            options={{
+              colorBackground: '#FFF',
+              colorPrimary: '#3204F5',
+              colorText: '#000000',
+              borderRadius: 8,
+            }}
+          />
+        </div>
+      }
     </>
   )
 }

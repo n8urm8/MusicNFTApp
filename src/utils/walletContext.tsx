@@ -37,7 +37,6 @@ export const WalletContext = createContext<WalletContextProps>({
 
 export const WalletContextProvier: React.FC<{ children: any }> = ({ children }) => {
 
-  
   const [account, setAccount] = useState<string | null | undefined>(null);
   const signerContract = new web3.eth.Contract(mediaNFT as unknown as AbiItem, NFTManagerAddress)
 

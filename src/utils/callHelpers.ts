@@ -1,5 +1,5 @@
 export const createCollection = async (contract, account, maxSupply, uri, price) => {
-  return contract.methods.createCollection(maxSupply, uri, price)
+  return contract.methods.createCollection(maxSupply, uri, price, account)
     .send({ from: account, gas: 240000 })
     .on('transactionHash', (tx) => {
       return tx.transactionHash

@@ -12,7 +12,7 @@
   --dark-gray: #616161;
   --gray: #a6a6a6;
   --stroke: #efefef;
-  --gray-background: #f6f6f6;
+  --gray-background: #f5f5f5;
   --white-background: #ffffff;
   --green-background: #eaf7ec;
   --red-background: #fff4f4;
@@ -367,4 +367,8 @@ input.error:focus {
 
 .textCenter {
   text-align: center;
+}
+
+.aspect1-1 {
+  aspect-ratio: 1 / 1;
 }

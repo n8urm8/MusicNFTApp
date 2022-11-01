@@ -1,0 +1,16 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #F5F5F5;
+}
+
+.wrapper>main {
+  margin: auto;
+  background: #FFF;
+  width: min(100vw, 1440px);
+}
+
+.pageMain {
+  flex-grow: 1;
+}
