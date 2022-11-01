@@ -9,6 +9,8 @@ interface NFTCardProps {
   id: number
   account: string | any
   signerContract: any
+  owned: boolean
+  created: boolean
 }
 
 interface IPFSDataProps {
@@ -20,8 +22,8 @@ interface IPFSDataProps {
   }
 }
 
-export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account }) => {
-
+export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, owned, created }) => {
+  
   const [purchaseCompleted, setPurchaseCompleted] = useState(false)
   const [loading, setLoading] = useState(true)
   const [minting, setMinting] = useState(false)
@@ -33,7 +35,11 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account })
   const price = Number(weiPrice[1]) / (10 ** 18)
   const [,currentSupply] = useGetCollectionCurrentSupply(id)
   const [,maxSupply] = useGetCollectionMaxSupply(id)
-  const [,creator] = useGetCollectionCreator(id)
+  const [, creator] = useGetCollectionCreator(id)
+  const balance = 0
+  const isCreator = account && account === creator
+
+
 
   const { onMint } = useMint()
   const handleMint = async () => {
@@ -61,6 +67,9 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account })
       setLoading(false)
     };
   }, [nfturi])
+
+  if (owned && Number(balance) === 0) return null
+  if (created && !isCreator) return null
   return (<>
     {nfturi !== 'Check out live streams and music collectibles on Volume.com!' && coverArtURL !== '' && !loading &&
       <div className="rounded-2xl gap-1 relative flex flex-col items-center justify-center p-1 bg-gray-100 border border-gray-300">

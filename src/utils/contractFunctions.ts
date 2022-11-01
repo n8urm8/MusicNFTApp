@@ -135,18 +135,18 @@ export const useGetCollectionCreator = (id: number) => {
   return [isLoading, data]
 }
 
-export const useGetUserCollectionBalance = (address: string, id: number) => {
+export const useGetUserCollectionBalance = (address: any, id: number) => {
+  const account = address && address.length > 0 ? address.toString() : ''
   const [data, setData] = useState(0)
-  const [isLoading, setIsLoading] = useState(false)
-
-  useEffect(() => {
-    setIsLoading(true)
-    async function fetch() {
-      const data = await contract.methods.balanceOf(address, id).call()
-      setData(data)
-    }
-    fetch()
-    setIsLoading(false)
-  }, [])
-  return [isLoading, data]
+  
+  if (account !== '' && account.length > 0) { 
+    useEffect(() => {
+      async function fetch() {
+        const data = await contract.methods.balanceOf(account, id).call()
+        setData(data)
+      }
+      fetch()
+    }, []);
+  }
+  return data
 }
