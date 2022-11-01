@@ -1,9 +1,10 @@
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export const PlayButton = ({ audioURL }) => {
   // const audio: string = audioURL.toString()
   // console.log('audio', audio)
-   const [audio, setAudio] = useState(new Audio(audioURL.toString()));
+  const [audio, setAudio] = useState(new Audio(audioURL.toString()));
   const [playing, setPlaying] = useState(false);
 
   const play = () => {
@@ -41,16 +42,16 @@ export const PlayButton = ({ audioURL }) => {
   //   }
   // }
   return !playing ?
-  <button
-    onClick={play}
-    className='font-bold text-gray-100 text-xs border-gray-400 border h-12 w-12 rounded-full'
-  >
-     play
-  </button> : 
-  <button
-    onClick={pause}
-    className='font-bold text-gray-100 text-xs border-gray-400 border h-12 w-12 rounded-full'
-  >
-     pause
-  </button>
+    <button
+      onClick={play}
+      className='rounded-full'
+    >
+      <Image src="/images/ic-play.png" width='40px' height='44px' />
+    </button> :
+    <button
+      onClick={pause}
+      className='rounded-full'
+    >
+      <Image src="/images/ic-pause.png" width='40px' height='44px' />
+    </button>
 }

@@ -86,3 +86,67 @@ export const useGetTotalCollections = () => {
   }, [fastRefresh])
   return [isLoading, collections]
 }
+
+export const useGetCollectionCurrentSupply = (id: number) => {
+  const [data, setData] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    setIsLoading(true)
+    async function fetch() {
+      const data = await contract.methods.totalSupply(id).call()
+      setData(data)
+    }
+    fetch()
+    setIsLoading(false)
+  }, [])
+  return [isLoading, data]
+}
+
+export const useGetCollectionMaxSupply = (id: number) => {
+  const [data, setData] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    setIsLoading(true)
+    async function fetch() {
+      const data = await contract.methods.maxSupply(id).call()
+      setData(data)
+    }
+    fetch()
+    setIsLoading(false)
+  }, [])
+  return [isLoading, data]
+}
+
+export const useGetCollectionCreator = (id: number) => {
+  const [data, setData] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    setIsLoading(true)
+    async function fetch() {
+      const data = await contract.methods.collectionCreator(id).call()
+      setData(data)
+    }
+    fetch()
+    setIsLoading(false)
+  }, [])
+  return [isLoading, data]
+}
+
+export const useGetUserCollectionBalance = (address: string, id: number) => {
+  const [data, setData] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    setIsLoading(true)
+    async function fetch() {
+      const data = await contract.methods.balanceOf(address, id).call()
+      setData(data)
+    }
+    fetch()
+    setIsLoading(false)
+  }, [])
+  return [isLoading, data]
+}

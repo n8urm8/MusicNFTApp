@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { NFTStorage } from 'nft.storage';
 import { useRef, useState } from 'react';
 import { useCreateCollection } from '../utils/contractFunctions';
+import { PaperCheckout } from './paperCheckout';
 
 const APIKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDE3MTg1ZjVkNjgxZjkzMmM5NTRiYmJEN0E5NjUyOGM5RENjYWQ5MjUiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1NzcyMjg2MTY4NywibmFtZSI6InRlc3RpbmcifQ.18XDH9Ioyg601vbaxek23ohbBcHN9QigqH-ff--E7uA';
 
@@ -53,7 +54,6 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
       //1. upload NFT content via NFT.storage
       const metaData = await uploadNFTContent(uploadedFileImage!, uploadedFileAudio!)
       setIpfsData(metaData)
-      console.log('metadata', ipfsData?.url)
 
       //2. Mint a NFT
       // const [txHash, error] = useCreateCollection(accountStr, web3, supply, metaData?.url, price)
@@ -93,6 +93,7 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
       const supply = Number(supplyInputElement.current?.value)
       const price = Number(priceInputElement.current?.value)
       try {
+        // @ts-ignore
         await onCreateCollection(contract, accountStr, supply, ipfsData?.url, price)
       } catch (error) {
           setErrorMessage("Failed to send tx to Mumbai.");
@@ -199,14 +200,16 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
           >
             {account ? 'Upload Collection' : 'Log in to create collection'}
           </button>}
-          {txStatus === "Uploaded" &&
+          {txStatus === "Uploaded" && <>
             <button
             disabled={uploadedFileImage === undefined || uploadedFileAudio === undefined || !account || account === undefined}
             className="hover:bg-gray-500 disabled:hover:bg-gray-100 border rounded-md border-gray-200 px-2 py-1.5 text-gray-500 hover:text-gray-300 font-bold"
             onClick={sendCreateTx}
           >
             {account ? 'Mint Collection' : 'Log in to create collection'}
-          </button>}
+            </button>
+            {/* @ts-ignore */}
+          <PaperCheckout account={account} id={0} cost={Number(priceInputElement.current?.value)} nftData={{uri: ipfsData?.url, maxSupply: Number(supplyInputElement.current?.value)}} method="create"  /></>}
         </form>
         {txStatus && <p>{txStatus}</p>}
         {imageView !== "" && <Image className='NFTImg' src={imageView} alt="NFT preview" height="100px" width="100px" />}

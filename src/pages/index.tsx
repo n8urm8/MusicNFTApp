@@ -8,15 +8,15 @@ import { AbiItem } from 'web3-utils';
 import { CollectibleDisplay } from "../components/collectibleDisplay";
 import { MagicConnector } from "../components/magicConnector";
 import MintNFT from "../components/mintNFT";
-import { LoginComponent } from "../components/paperCheckout";
 import nftABI from '../utils/ABIs/mediaNFT.json';
 import { NFTManagerAddress } from '../utils/contractAddresses';
-import { useGetCollectionURI } from "../utils/contractFunctions";
 import { mumbaiChain } from "../utils/networks";
 
 
+const magicConnectAPIKey: string = 'pk_live_57DABD2AFE80654E'
+const magicAuthAPIKey: string = 'pk_live_79F34B8F28CF3553'
 
-const magic = typeof window != 'undefined' && new Magic('pk_live_52DD541C5579CC8C', {
+const magic = typeof window != 'undefined' && new Magic('pk_live_57DABD2AFE80654E', {
   network: mumbaiChain,
   locale: 'en_US',
   extensions: [new ConnectExtension()]
@@ -31,8 +31,6 @@ const Home: NextPage = () => {
 
   const [account, setAccount] = useState<string | null>();
   const shortAddress = `${account?.slice(0, 4)}...${account?.slice(-4)}`
-  
-  const testURI = useGetCollectionURI(0)
 
   const login = async () => {
     web3.eth
@@ -72,7 +70,6 @@ const Home: NextPage = () => {
         <h1 className="text-3xl font-extrabold leading-normal text-gray-850 ">
           Chain <span className="text-gray-400">Beatz</span>
         </h1>
-        <LoginComponent />
         <MagicConnector
           shortAddress={shortAddress}
           account={account}
