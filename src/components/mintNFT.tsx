@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { NFTStorage } from 'nft.storage';
 import React, { useRef, useState } from 'react';
 import { useCreateCollection } from '../utils/contractFunctions';
+import { Modal } from './modal';
 import { PaperCheckout } from './paperCheckout';
 
 const APIKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDE3MTg1ZjVkNjgxZjkzMmM5NTRiYmJEN0E5NjUyOGM5RENjYWQ5MjUiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY1NzcyMjg2MTY4NywibmFtZSI6InRlc3RpbmcifQ.18XDH9Ioyg601vbaxek23ohbBcHN9QigqH-ff--E7uA';
@@ -15,6 +16,7 @@ interface MintNFTProps {
 const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
   const router = useRouter()
 
+  const [purchaseCompleted, setPurchaseCompleted] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uploadedFileImage, setUploadedFileImage] = useState<File | undefined>();
   const [uploadedFileAudio, setUploadedFileAudio] = useState<File | undefined>();
@@ -98,6 +100,7 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
       console.log(error);
     } finally {
       setTxStatus("Collection Created!")
+      setPurchaseCompleted(true)
       router.push('/')
     }
   }
@@ -204,17 +207,27 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
                 {account ? 'Upload Collection' : 'Log in to create collection'}
               </button>}
             {txStatus === "Uploaded" && <div className='gap-1 flex w-full'>
-              <button
-                disabled={uploadedFileImage === undefined || uploadedFileAudio === undefined || !account || account === undefined || loading }
-                className="primary"
-                onClick={sendCreateTx}
-              >
-                {account ? 'Mint Collection' : 'Log in to create collection'}
-              </button>
-              {/* @ts-ignore */}
-              <PaperCheckout account={account} id={0} cost={Number(priceInputElement.current?.value)} nftData={{ uri: ipfsData?.url, maxSupply: Number(supplyInputElement.current?.value) }} method="create">
-                Create with CC
-              </PaperCheckout>
+              <Modal header="Purchase" openButtonText="Buy">
+                <div className="flex flex-col gap-2 items-center w-80">
+                  {!purchaseCompleted ? <>
+                    {/* @ts-ignore */}
+                    <PaperCheckout onComplete={() => setPurchaseCompleted(true)} account={account} id={0} cost={Number(priceInputElement.current?.value)} nftData={{ uri: ipfsData?.url, maxSupply: Number(supplyInputElement.current?.value) }} method="create">
+                      Purchase with CC
+                    </PaperCheckout>
+                    <p>or</p>
+                    <button
+                      disabled={uploadedFileImage === undefined || uploadedFileAudio === undefined || !account || account === undefined || loading}
+                      className="primary w-full"
+                      onClick={sendCreateTx}
+                    >
+                      {account ? 'Mint Collection' : 'Log in to create collection'}
+                    </button>
+                  </>
+                    :
+                    <p>Thank you for your purchase!</p>
+                  }
+                </div>
+              </Modal>
             </div>}
           </div>
         </div>}
