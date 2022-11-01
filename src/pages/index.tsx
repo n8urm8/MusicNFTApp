@@ -1,62 +1,20 @@
-import { ConnectExtension } from "@magic-ext/connect";
-import { Magic } from "magic-sdk";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
-import Web3 from "web3";
-import { AbiItem } from 'web3-utils';
+import { useContext } from "react";
 import { CollectibleDisplay } from "../components/collectibleDisplay";
 import { MagicConnector } from "../components/magicConnector";
 import MintNFT from "../components/mintNFT";
-import nftABI from '../utils/ABIs/mediaNFT.json';
-import { NFTManagerAddress } from '../utils/contractAddresses';
-import { mumbaiChain } from "../utils/networks";
+import { WalletContext } from "../utils/walletContext";
 
-
-const magicConnectAPIKey: string = 'pk_live_57DABD2AFE80654E'
-const magicAuthAPIKey: string = 'pk_live_79F34B8F28CF3553'
-
-const magic = typeof window != 'undefined' && new Magic('pk_live_57DABD2AFE80654E', {
-  network: mumbaiChain,
-  locale: 'en_US',
-  extensions: [new ConnectExtension()]
-} as any);
-
-// @ts-ignore
-const web3 = new Web3(magic.rpcProvider);
-
-const signerContract = new web3.eth.Contract(nftABI as unknown as AbiItem, NFTManagerAddress)
 
 const Home: NextPage = () => {
-
-  const [account, setAccount] = useState<string | null>();
+  const { account } = useContext(WalletContext)
+  const { login } = useContext(WalletContext)
+  const { disconnect } = useContext(WalletContext)
+  const { showWallet } = useContext(WalletContext)
+  const { signerContract } = useContext(WalletContext)
+ 
   const shortAddress = `${account?.slice(0, 4)}...${account?.slice(-4)}`
-
-  const login = async () => {
-    web3.eth
-      .getAccounts()
-      .then((accounts) => {
-        setAccount(accounts?.[0]);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-  
-  const showWallet = () => {
-    // @ts-ignore
-    magic.connect.showWallet().catch((e: any) => {
-      console.log(e);
-    });
-  };
-
-  const disconnect = async () => {
-    // @ts-ignore
-    await magic.connect.disconnect().catch((e: any) => {
-      console.log(e);
-    });
-    setAccount(null);
-  };
 
   return (
     <div className="flex flex-col bg-gray-600 min-h-screen">

@@ -80,16 +80,17 @@ export const PaperCheckout: React.FC<PaperCheckoutProps> = ({ account, id, cost,
   return (
     <>
       <button disabled={!account} className="primary" onClick={getClientSecret}>Buy CC</button>
-      {clientSecret !== undefined && <div className="fixed z-100 top-10 inset-0 bg-gray-600 bg-opacity-50 h-full w-full"><CheckoutWithCard
+      {clientSecret !== undefined && <div className="fixed z-10 p-2 top-1/3 inset-0 bg-gray-600 bg-opacity-50 h-full w-full">
+        <CheckoutWithCard
         sdkClientSecret={clientSecret}
         onPaymentSuccess={(result) => { console.log('success:', result) }}
         onReview={(result) => { console.log('review:', result) }}
         onError={(error) => { console.log('error:', error) }}
         options={{
-            colorBackground: '#121212',
-            colorPrimary: '#19A8D6',
-            colorText: '#f0f0f0',
-            borderRadius: 15,
+            colorBackground: '#EFEFEF',
+            colorPrimary: '#3204F5',
+            colorText: '#000000',
+            borderRadius: 16,
         }}
       /></div>}
     </>
