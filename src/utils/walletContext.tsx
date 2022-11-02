@@ -28,7 +28,7 @@ interface WalletContextProps {
 }
 
 export const WalletContext = createContext<WalletContextProps>({
-  account: null,
+  account: '',
   login: () => null,
   showWallet: () => null,
   disconnect: () => null,
@@ -37,14 +37,14 @@ export const WalletContext = createContext<WalletContextProps>({
 
 export const WalletContextProvier: React.FC<{ children: any }> = ({ children }) => {
 
-  const [account, setAccount] = useState<string | null | undefined>(null);
+  const [account, setAccount] = useState<string | undefined>('');
   const signerContract = new web3.eth.Contract(mediaNFT as unknown as AbiItem, NFTManagerAddress)
 
   const login = async () => {
     web3.eth
       .getAccounts()
       .then((accounts) => {
-        setAccount(accounts?.[0]);
+        setAccount(accounts[0]);
       })
       .catch((error) => {
         console.log(error);
@@ -63,7 +63,7 @@ export const WalletContextProvier: React.FC<{ children: any }> = ({ children }) 
     await magic.connect.disconnect().catch((e: any) => {
       console.log(e);
     });
-    setAccount(null);
+    setAccount('');
   };
 
   return (

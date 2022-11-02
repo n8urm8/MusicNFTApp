@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useGetTotalCollections } from "../utils/contractFunctions";
 import { NFTCard } from "./nftCard";
+import { NFTCardFiltered } from "./nftCardFiltered";
 
 interface CollectibleDisplayProps {
   signerContract: any
@@ -30,12 +31,21 @@ export const CollectibleDisplay: React.FC<CollectibleDisplayProps> = ({ signerCo
         <button className="secondary" onClick={() => { setOnlyOwned(false); setOnlyCreated(true)}}>Created</button>
         <button className="secondary" onClick={() => { setOnlyOwned(false); setOnlyCreated(false)}}>All</button>
       </div>}
-      <div className="flex gap-1 pt-2 flex-wrap">
+      {!onlyOwned &&
+        <div className="flex gap-1 pt-2 flex-wrap">
+          {[...Array(length)].map((e, i) => {
+            return <NFTCard owned={onlyOwned} created={onlyCreated} id={i} key={i} signerContract={signerContract} account={account} />
+          })
+          }
+        </div>}
+      {onlyOwned &&
+        <div className="flex gap-1 pt-2 flex-wrap">
         {[...Array(length)].map((e, i) => {
-          return <NFTCard owned={onlyOwned} created={onlyCreated} id={i} key={i} signerContract={signerContract} account={account} />
+          return <NFTCardFiltered owned={onlyOwned} created={onlyCreated} id={i} key={i} signerContract={signerContract} account={account} />
         })
         }
-      </div>
+        </div> 
+      }
     </div>
   )
 };

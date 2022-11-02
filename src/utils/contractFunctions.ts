@@ -7,7 +7,13 @@ import { createCollection, mint } from './callHelpers';
 import { NFTManagerAddress } from './contractAddresses';
 import useRefresh from './useRefresh';
 
-const web3Provider = new Web3(new Web3.providers.HttpProvider('https://polygon-mumbai.g.alchemy.com/v2/v9tZMbd55QG9TpLMqrkDc1dQIzgZazV6'))
+// https://polygon-testnet.public.blastapi.io	
+// my alchemy: https://polygon-mumbai.g.alchemy.com/v2/v9tZMbd55QG9TpLMqrkDc1dQIzgZazV6
+// https://rpc-mumbai.maticvigil.com
+// https://polygontestapi.terminet.io/rpc	
+// https://rpc-mumbai.maticvigil.com/v1/76d0cf3af7e818e8a8f557b12be51428bc054cef
+
+const web3Provider = new Web3(new Web3.providers.HttpProvider('https://rpc-mumbai.maticvigil.com/v1/76d0cf3af7e818e8a8f557b12be51428bc054cef'))
 
 const contract = new web3Provider.eth.Contract(nftABI as unknown as AbiItem, NFTManagerAddress)
 
@@ -136,17 +142,17 @@ export const useGetCollectionCreator = (id: number) => {
 }
 
 export const useGetUserCollectionBalance = (address: any, id: number) => {
-  const account = address && address.length > 0 ? address.toString() : ''
+  const userWallet = address && address.length > 0 ? address.toString() : ''
   const [data, setData] = useState(0)
   
-  if (account !== '' && account.length > 0) { 
+  if (userWallet !== '' && userWallet.length > 0) { 
     useEffect(() => {
       async function fetch() {
-        const data = await contract.methods.balanceOf(account, id).call()
+        const data = await contract.methods.balanceOf(userWallet, id).call()
         setData(data)
       }
       fetch()
-    }, []);
+    }, [userWallet]);
   }
   return data
 }
