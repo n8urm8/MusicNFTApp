@@ -69,9 +69,9 @@ export const CollectionDetail: React.FC<CollectionDetailsProps> = ({account, col
   if (loading || nftData === undefined) return null
   if(nfturi === 'Check out live streams and music collectibles on Volume.com!' || coverArtURL === '') return null
   return (
-    <div className="flex w-full gap-10 pt-4">
+    <div className="flex w-full gap-10 p-4">
       <div className="w-1/2 justify-end flex">
-        <div className="max-w-[540px] max-h-[540px] w-full aspect1-1 pl-4 relative">
+        <div className="max-w-[540px] max-h-[540px] w-full h-auto aspect1-1 pl-4 relative">
           {!loading &&
             <>
           <Image src={coverArtURL} layout='fill' className="rounded-lg object-cover" priority={true} />
