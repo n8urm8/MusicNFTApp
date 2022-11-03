@@ -4,14 +4,18 @@ interface ModalProps {
   children: React.ReactNode
   openButtonText: string
   header: string
+  available: boolean
 }
 
-export const Modal: React.FC<ModalProps> = ({ children, openButtonText, header }) => {
+export const Modal: React.FC<ModalProps> = ({ children, openButtonText, header, available }) => {
   const [showModal, setShowModal] = useState(false)
   
   return (
     <>
-      <button type='button' className="primary w-full" onClick={() => setShowModal(true)}>{openButtonText}</button>
+      {available ?
+        <button type='button' className="primary w-full" onClick={() => setShowModal(true)}>{openButtonText}</button>
+        : <button type='button' className="secondary w-full" disabled>Sold out!</button>
+      }
       {showModal ?
        <>
           <div

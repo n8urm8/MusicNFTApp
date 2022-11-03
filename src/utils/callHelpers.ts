@@ -7,7 +7,7 @@ export const createCollection = async (contract, account, maxSupply, uri, price)
 }
 export const mint = async (contract, account, to, id, amount, price) => {
   return contract.methods.mint(to, id, amount)
-    .send({ from: account, value: price, gas: 100000 })
+    .send({ from: account, value: price, gas: 120000 })
     .on('transactionHash', (tx) => { 
       return tx.transactionHash })
 }

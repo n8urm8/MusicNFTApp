@@ -103,7 +103,7 @@ export const NFTCardFiltered: React.FC<NFTCardProps> = ({ id, signerContract, ac
               </div>
             </div>
             <div className="flex flex-row w-1/2">
-              <Modal header="Purchase" openButtonText="Buy">
+              <Modal available={Number(maxSupply) - Number(currentSupply) > 0} header="Purchase" openButtonText="Buy">
                 <div className="flex flex-col gap-2 items-center w-80">
                   {!purchaseCompleted ? <>
                     <PaperCheckout onComplete={() => setPurchaseCompleted(true)} account={account} id={id} method="mint" cost={price}>Buy with CC</PaperCheckout>

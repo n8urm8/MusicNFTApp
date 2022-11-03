@@ -1,8 +1,9 @@
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { NFTStorage } from 'nft.storage';
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { useCreateCollection } from '../utils/contractFunctions';
+import { WalletContext } from '../utils/walletContext';
 import { Modal } from './modal';
 import { PaperCheckout } from './paperCheckout';
 
@@ -16,6 +17,7 @@ interface MintNFTProps {
 const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
   const router = useRouter()
 
+  const { login } = useContext(WalletContext)
   const [purchaseCompleted, setPurchaseCompleted] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uploadedFileImage, setUploadedFileImage] = useState<File | undefined>();
@@ -117,14 +119,15 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
         <h3 className='font-bold text-xl'>Create Collectible NFT</h3>
 
         <div className='flex flex-col gap-2 border border-dashed border-gray-300 w-full items-center justify-center rounded-2xl h-40'>
-          <label
+          {account === '' ? <button className='primary' onClick={login}>Log in to Create!</button> : <>
+            <label
             className="text-black bg-gray-100 h-12 px-4 py-3 rounded-lg flex justify-center items-center text-sm cursor-pointer border border-gray-200"
             htmlFor='audio-upload'
           >
             {audioView === '' ? "Upload Audio" : "Change Audio"}
             <input type="file" required className='hidden' onChange={handleFileUploadAudio} id='audio-upload' />
           </label>
-          <p>{uploadedFileAudio?.name}</p>
+          <p>{uploadedFileAudio?.name}</p></>}
         </div>
         {audioView !== "" && <div className='flex gap-4'>
           <div className='w-1/3 gap-2'>
@@ -207,7 +210,7 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
                 {account ? 'Upload Collection' : 'Log in to create collection'}
               </button>}
             {txStatus === "Uploaded" && <div className='gap-1 flex w-full'>
-              <Modal header="Purchase" openButtonText="Buy">
+              <Modal available header="Purchase" openButtonText="Buy">
                 <div className="flex flex-col gap-2 items-center w-80">
                   {!purchaseCompleted ? <>
                     {/* @ts-ignore */}

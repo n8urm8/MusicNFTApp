@@ -1,7 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useGetCollectionCreator, useGetCollectionCurrentSupply, useGetCollectionMaxSupply, useGetCollectionPrice, useGetCollectionURI, useMint } from "../utils/contractFunctions"
+import { WalletContext } from "../utils/walletContext"
 import { Modal } from "./modal"
 import { PaperCheckout } from "./paperCheckout"
 import { PlayButton } from "./playButton"
@@ -25,6 +26,7 @@ interface IPFSDataProps {
 
 export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, owned, created }) => {
   
+  const { login } = useContext(WalletContext)
   const [purchaseCompleted, setPurchaseCompleted] = useState(false)
   const [loading, setLoading] = useState(true)
   const [minting, setMinting] = useState(false)
@@ -33,9 +35,9 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, o
   const [coverArtURL, setCoverArtURL] = useState('')
   const audioURL = nftData !== undefined && nftData !== null && `https://${nftData.properties?.audio.slice(7, 66)}.ipfs.nftstorage.link/${nftData.properties?.audio.slice(66)}`
   const weiPrice = useGetCollectionPrice(id)
-  const price = Number(weiPrice[1]) / (10 ** 18)
-  const [,currentSupply] = useGetCollectionCurrentSupply(id)
-  const [,maxSupply] = useGetCollectionMaxSupply(id)
+  const price = (Number(weiPrice[1]) / (10 ** 18)).toLocaleString('fullwide', { maximumSignificantDigits:8})
+  const [, currentSupply] = useGetCollectionCurrentSupply(id)
+  const [, maxSupply] = useGetCollectionMaxSupply(id)
   const [, creator] = useGetCollectionCreator(id)
   const collectiblePageURL = `/collection/${id}`
 
@@ -50,7 +52,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, o
   const handleMint = async () => {
     setMinting(true)
     try {
-      await onMint(signerContract, account, price, account, id, 1)
+      await onMint(signerContract, account, Number(price), account, id, 1)
     } catch (error) {
       console.log(error);
     } finally {
@@ -61,14 +63,14 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, o
 
   useEffect(() => {
     if (!isLoading && nfturi) {
-    const url = `https://${nfturi?.toString().slice(7).slice(0, -14)}.ipfs.nftstorage.link/metadata.json`
-    async function fetchData() {
-      if (url === 'https://.ipfs.nftstorage.link/metadata.json' || url === 'https://undefined.ipfs.nftstorage.link/undefined' || nfturi === '') return 
-      const response = await fetch(url)
-      const data = await response.json()
-      setNftData(data)
-      setCoverArtURL(`https://${data.image?.slice(7, 66)}.ipfs.nftstorage.link/${data.image?.slice(66)}`)
-    } fetchData()
+      const url = `https://${nfturi?.toString().slice(7).slice(0, -14)}.ipfs.nftstorage.link/metadata.json`
+      async function fetchData() {
+        if (url === 'https://.ipfs.nftstorage.link/metadata.json' || url === 'https://undefined.ipfs.nftstorage.link/undefined' || nfturi === '') return
+        const response = await fetch(url)
+        const data = await response.json()
+        setNftData(data)
+        setCoverArtURL(`https://${data.image?.slice(7, 66)}.ipfs.nftstorage.link/${data.image?.slice(66)}`)
+      } fetchData()
       setLoading(false)
     };
   }, [nfturi])
@@ -89,8 +91,8 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, o
           <div className="flex justify-between w-full mb-1">
             <Link href={collectiblePageURL}>
               <a className="flex justify-between w-full">
-              <p className="bold large">{nftData?.name}</p>
-              <p className="dark">{Number(maxSupply) - Number(currentSupply)}/{maxSupply}</p>
+                <p className="bold large">{nftData?.name}</p>
+                <p className="dark">{Number(maxSupply) - Number(currentSupply)}/{maxSupply}</p>
               </a>
             </Link>
           </div>
@@ -103,19 +105,22 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, o
               </div>
             </div>
             <div className="flex flex-row w-1/2">
-              <Modal header="Purchase" openButtonText="Buy">
+              <Modal available={Number(maxSupply) - Number(currentSupply) > 0} header="Purchase" openButtonText="Buy">
                 <div className="flex flex-col gap-2 items-center w-80">
-                  {!purchaseCompleted ? <>
-                    <PaperCheckout onComplete={() => setPurchaseCompleted(true)} account={account} id={id} method="mint" cost={price}>Buy with CC</PaperCheckout>
-                    <p>or</p>
-                    <button className="primary w-full" disabled={account === null || account === undefined || minting} onClick={handleMint}>
-                      Buy with Crypto
-                    </button>
+                  {!purchaseCompleted ?
+                    (account !== '' ) ?
+                      <>
+                        <PaperCheckout onComplete={() => setPurchaseCompleted(true)} account={account} id={id} method="mint" cost={Number(price)}>Buy with CC</PaperCheckout>
+                        <p>or</p>
+                        <button className="primary w-full" disabled={account === '' || account === undefined || minting} onClick={handleMint}>
+                          Buy with Crypto
+                        </button>
                   </>
+                  : <button className="primary" onClick={login}>Log in to Complete Purchase</button>
                     :
                     <p>Thank you for your purchase!</p>
                   }
-                </div>  
+                </div>
               </Modal>
             </div>
           </div>
