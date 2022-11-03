@@ -1,7 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
-import { useGetCollectionCreator, useGetCollectionCurrentSupply, useGetCollectionMaxSupply, useGetCollectionPrice, useGetCollectionURI, useMint } from "../utils/contractFunctions"
+import { useGetCollectionCreator, useGetCollectionCurrentSupply, useGetCollectionMaxSupply, useGetCollectionPrice, useGetCollectionURI, useGetUserCollectionBalance, useMint } from "../utils/contractFunctions"
 import { Modal } from "./modal"
 import { PaperCheckout } from "./paperCheckout"
 import { PlayButton } from "./playButton"
@@ -23,7 +23,7 @@ interface IPFSDataProps {
   }
 }
 
-export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, owned, created }) => {
+export const NFTCardFiltered: React.FC<NFTCardProps> = ({ id, signerContract, account, owned, created }) => {
   
   const [purchaseCompleted, setPurchaseCompleted] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -39,9 +39,9 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, o
   const [, creator] = useGetCollectionCreator(id)
   const collectiblePageURL = `/collection/${id}`
 
-  const balance = 0
+  // const balance = 0
   // this causing error
-  // const balance = useGetUserCollectionBalance(account, id)
+  const balance = useGetUserCollectionBalance(account, id)
   const isCreator = account && account === creator
 
 

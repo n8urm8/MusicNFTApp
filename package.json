@@ -12,6 +12,7 @@
     "@magic-ext/connect": "^3.0.0",
     "@magic-ext/oauth": "^4.0.0",
     "@magic-sdk/types": "^9.0.0",
+    "@paperxyz/react-client-sdk": "^0.7.34",
     "bignumber.js": "^9.1.0",
     "magic-sdk": "^10.0.0",
     "next": "12.3.1",
