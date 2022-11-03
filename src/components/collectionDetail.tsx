@@ -116,7 +116,7 @@ export const CollectionDetail: React.FC<CollectionDetailsProps> = ({account, col
             </div>
           </div>
             <div className="flex flex-row w-1/3">
-              <Modal header="Purchase" openButtonText="Buy">
+              <Modal available={Number(maxSupply) - Number(currentSupply) > 0} header="Purchase" openButtonText="Buy">
                 <div className="flex flex-col gap-2 items-center w-80">
                   {!purchaseCompleted ? <>
                     <PaperCheckout onComplete={() => setPurchaseCompleted(true)} account={account} id={collectibleID} method="mint" cost={price}>Buy with CC</PaperCheckout>
