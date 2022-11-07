@@ -5,6 +5,7 @@ import { CollectionDetail } from "../../components/collectionDetail";
 import { WalletContext } from "../../utils/walletContext";
 
 
+
 const CollectionDetails: NextPage = () => {
   const router = useRouter()
   const { id } = router.query

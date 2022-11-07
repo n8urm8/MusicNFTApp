@@ -13,7 +13,7 @@ export const MagicConnector: React.FC<MagicConnectorProps> = ({
     <>
     {!account &&
       <button onClick={login} className="primary">
-      Magic Connect
+      Login
     </button>}
     {account &&
       (<div className="flex gap-1">

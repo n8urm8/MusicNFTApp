@@ -85,8 +85,9 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, o
           <div className="absolute -top-44 left-32">
             <PlayButton audioURL={audioURL} />
           </div>
-          <div className="flex text-left w-full -mt-2">
+          <div className="flex text-left w-full -mt-2 justify-between">
             <p className="dark">{creator?.toString().slice(0, 6)}...</p>
+            <p className="dark">#{id}</p>
           </div>
           <div className="flex justify-between w-full mb-1">
             <Link href={collectiblePageURL}>

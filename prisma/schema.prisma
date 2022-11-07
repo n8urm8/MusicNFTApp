@@ -6,6 +6,29 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Artist {
+  id                String       @id
+  name              String
+  email             String
+  avatar            String
+  collectionsOwned  Collection[] @relation("CollectionsOwned")
+  collectionCreated Collection[] @relation("CollectionsCreated")
+}
+
+model Collection {
+  id              Int      @id
+  creator         Artist   @relation("CollectionsCreated", fields: [artistId], references: [id])
+  name            String
+  coverArt        String
+  audio           String
+  description     String
+  maxSupply       Int
+  purchasedAmount Int
+  price           Decimal
+  artistId        String
+  owners          Artist[] @relation("CollectionsOwned")
 }
