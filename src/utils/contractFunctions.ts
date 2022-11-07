@@ -1,19 +1,13 @@
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useState } from 'react';
-import Web3 from 'web3';
 import { AbiItem } from 'web3-utils';
 import nftABI from './ABIs/mediaNFT.json';
 import { createCollection, mint } from './callHelpers';
 import { NFTManagerAddress } from './contractAddresses';
+import { getWeb3 } from './globals/web3';
 import useRefresh from './useRefresh';
 
-// https://polygon-testnet.public.blastapi.io	
-// my alchemy: https://polygon-mumbai.g.alchemy.com/v2/v9tZMbd55QG9TpLMqrkDc1dQIzgZazV6
-// https://rpc-mumbai.maticvigil.com
-// https://polygontestapi.terminet.io/rpc	
-// https://rpc-mumbai.maticvigil.com/v1/76d0cf3af7e818e8a8f557b12be51428bc054cef
-
-const web3Provider = new Web3(new Web3.providers.HttpProvider('https://rpc-mumbai.maticvigil.com/v1/76d0cf3af7e818e8a8f557b12be51428bc054cef'))
+const web3Provider = getWeb3()
 
 const contract = new web3Provider.eth.Contract(nftABI as unknown as AbiItem, NFTManagerAddress)
 

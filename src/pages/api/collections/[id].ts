@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { prisma } from '../../../utils/db';
+import { prisma } from '../../../utils/globals/db';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
   

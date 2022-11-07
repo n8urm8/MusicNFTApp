@@ -16,6 +16,10 @@ export const serverSchema = z.object({
  */
 export const clientSchema = z.object({
   // NEXT_PUBLIC_CLIENTVAR: z.string(),
+  NEXT_PUBLIC_RPC_PUBLIC1: z.string(),
+  NEXT_PUBLIC_RPC_PUBLIC2: z.string(),
+  NEXT_PUBLIC_RPC_PUBLIC3: z.string(),
+  NEXT_PUBLIC_RPC_PUBLIC4: z.string(),
 });
 
 /**
@@ -26,4 +30,8 @@ export const clientSchema = z.object({
  */
 export const clientEnv = {
   // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+  NEXT_PUBLIC_RPC_PUBLIC1: process.env.NEXT_PUBLIC_RPC_PUBLIC1,
+  NEXT_PUBLIC_RPC_PUBLIC2: process.env.NEXT_PUBLIC_RPC_PUBLIC2,
+  NEXT_PUBLIC_RPC_PUBLIC3: process.env.NEXT_PUBLIC_RPC_PUBLIC3,
+  NEXT_PUBLIC_RPC_PUBLIC4: process.env.NEXT_PUBLIC_RPC_PUBLIC4,
 };
