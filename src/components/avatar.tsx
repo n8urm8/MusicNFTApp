@@ -12,7 +12,9 @@ export const Avatar: React.FC<AvatarProps> = ({avatarURL, name, id}) => {
 
   return (
     <Link href={`/artists/${id}`} className='relative rounded w-12 h-12'>
-      <Image src={avatarURL} alt={name} layout='fill' />
+      <a className='relative rounded w-12 h-12'>
+        <Image src={avatarURL} alt={name} layout='fill' className='object-cover rounded' />
+        </a>
     </Link>
   )
 }

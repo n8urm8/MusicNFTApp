@@ -1,3 +1,4 @@
+import { Artist, Collection } from "@prisma/client"
 import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
@@ -24,9 +25,13 @@ interface CollectionDetailsProps {
   signerContract: any
 }
 
+interface Collectible extends Collection {
+  owners: Artist[]
+}
+
 export const CollectionDetail: React.FC<CollectionDetailsProps> = ({ account, collectibleID, signerContract }) => {
   
-  const [collection, setCollection] = useState()
+  const [collection, setCollection] = useState<Collectible>()
   const [purchaseCompleted, setPurchaseCompleted] = useState(false)
   const [isLoading, nfturi] = useGetCollectionURI(collectibleID)
   const [loading, setLoading] = useState(true)
@@ -47,7 +52,8 @@ export const CollectionDetail: React.FC<CollectionDetailsProps> = ({ account, co
     async function getCollection() {
       const response = await fetch(`/api/collections/${collectibleID}`)
       if (response) {
-        const data = await response.json()
+        const data: Collectible = await response.json()
+        console.log(data)
         setCollection(data)
         setCoverArtURL(`https://${data.coverArt.slice(7, 66)}.ipfs.nftstorage.link/${data.coverArt.slice(66)}`)
         setAudioURL(`https://${data.audio.slice(7, 66)}.ipfs.nftstorage.link/${data.audio.slice(66)}`)
@@ -155,7 +161,7 @@ export const CollectionDetail: React.FC<CollectionDetailsProps> = ({ account, co
         </div>
         <div className="flex flex-col">
           <h5 className="bold">Owners</h5>
-          <CollectionOwners owners={collection.owners}
+          <CollectionOwners owners={collection?.owners} />
         </div>
         <div className="flex flex-col gap-2">
           <h5 className="bold">Activity</h5>
