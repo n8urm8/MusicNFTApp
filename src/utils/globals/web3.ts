@@ -6,8 +6,8 @@ declare global {
 }
 
 const nodes = [
-  process.env.NEXT_PUBLIC_RPC_PUBLIC1,
-  process.env.NEXT_PUBLIC_RPC_PUBLIC2,
+  // process.env.NEXT_PUBLIC_RPC_PUBLIC1,
+  // process.env.NEXT_PUBLIC_RPC_PUBLIC2,
   process.env.NEXT_PUBLIC_RPC_PUBLIC3,
   process.env.NEXT_PUBLIC_RPC_PUBLIC4
 ]

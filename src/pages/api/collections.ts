@@ -11,9 +11,15 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     savedCollection = await prisma.collection.create({
       data: collectionData
     })
+  } else if (req.method === 'GET') {
+    savedCollection = await prisma.collection.findMany({
+      include: {
+        owners: true,
+      },
+    })
   } else {
     return res.status(405).json({ message: 'Method not allowed' });
   }
  
-  res.json(savedCollection);
+  return res.json(savedCollection);
 }
