@@ -8,11 +8,16 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const artistData = JSON.parse(req.body);
+  let artistData;
+  try {
+    artistData = JSON.parse(req.body);
+  } catch (e) {
+    console.error('json parse error: ', e)
+  }
 
   const savedArtist = await prisma.artist.create({
     data: artistData
   })
 
   res.json(savedArtist);
-};
+}

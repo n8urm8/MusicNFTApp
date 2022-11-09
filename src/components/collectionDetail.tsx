@@ -11,14 +11,7 @@ import { Modal } from "./modal"
 import { PaperCheckout } from "./paperCheckout"
 import { PlayButton } from "./playButton"
 
-interface IPFSDataProps {
-  name?: string
-  description?: string
-  image?: string
-  properties?: {
-    audio: string
-  }
-}
+
 
 interface CollectionDetailsProps {
   account: string
@@ -57,19 +50,6 @@ export const CollectionDetail: React.FC<CollectionDetailsProps> = ({ account, co
     setLoading(false)
   }, [])
 
-  // useEffect(() => {
-  //   if (!isLoading && nfturi) {
-  //     const url = `https://${nfturi?.toString().slice(7).slice(0, -14)}.ipfs.nftstorage.link/metadata.json`
-  //     async function fetchData() {
-  //       if (url === 'https://.ipfs.nftstorage.link/metadata.json' || url === 'https://undefined.ipfs.nftstorage.link/undefined' || nfturi === '') return
-  //       const response = await fetch(url)
-  //       const data = await response.json()
-  //       setNftData(data)
-  //       setCoverArtURL(`https://${data.image?.slice(7, 66)}.ipfs.nftstorage.link/${data.image?.slice(66)}`)
-  //     } fetchData()
-  //     setLoading(false)
-  //   }
-  // }, [nfturi])
 
   const { onMint } = useMint()
   const handleMint = async () => {

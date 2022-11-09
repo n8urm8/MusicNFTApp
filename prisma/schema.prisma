@@ -28,7 +28,7 @@ model Collection {
   description     String
   maxSupply       Int
   purchasedAmount Int
-  price           Decimal
+  price           String
   artistId        String
   owners          Artist[] @relation("CollectionsOwned")
 }

@@ -25,6 +25,7 @@ interface WalletContextProps {
   showWallet: () => void
   disconnect: () => void
   signerContract: any
+  requestEmail: () => void
 }
 
 export const WalletContext = createContext<WalletContextProps>({
@@ -33,6 +34,7 @@ export const WalletContext = createContext<WalletContextProps>({
   showWallet: () => null,
   disconnect: () => null,
   signerContract: null,
+  requestEmail: () => null,
 })
 
 export const WalletContextProvier: React.FC<{ children: any }> = ({ children }) => {
@@ -66,7 +68,15 @@ export const WalletContextProvier: React.FC<{ children: any }> = ({ children }) 
     setAccount('');
   };
 
+  const requestEmail = async () => {
+    // @ts-ignore
+    const email = await magic.connect.requestUserInfo().catch((e: any) => {
+      console.error(e)
+    })
+    return email
+  }
+
   return (
-    <WalletContext.Provider value={{ account, login, showWallet, disconnect, signerContract }}>{children}</WalletContext.Provider>
+    <WalletContext.Provider value={{ account, login, showWallet, disconnect, signerContract, requestEmail }}>{children}</WalletContext.Provider>
   )
 }

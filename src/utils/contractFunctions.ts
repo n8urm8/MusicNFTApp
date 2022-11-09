@@ -40,99 +40,81 @@ export const useMint = () => {
 
 export const useGetCollectionPrice = (id: number) => {
   const [collectionPrice, setCollectionPrice] = useState(0)
-  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    setIsLoading(true)
     async function fetch() {
       const data = await contract.methods.collectionPrice(id).call()
       setCollectionPrice(data)
     }
     fetch()
-    setIsLoading(false)
   }, [])
-  return [isLoading, collectionPrice]
+  return collectionPrice
 }
 
 export const useGetCollectionURI = (id: number) => {
   const [collectionURI, setCollectionURI] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    setIsLoading(true)
     async function fetch() {
       const data = await contract.methods.uri(id).call()
       setCollectionURI(data)
     }
     fetch()
-    setIsLoading(false)
   }, [])
-  return [isLoading, collectionURI]
+  return collectionURI
 }
 
 export const useGetTotalCollections = () => {
   const [collections, setCollections] = useState(0)
-  const [isLoading, setIsLoading] = useState(false)
   const {fastRefresh} = useRefresh()
 
   useEffect(() => {
-    setIsLoading(true)
     async function fetch() {
       const data = await contract.methods.getTotalCollections().call()
       setCollections(data)
     }
     fetch()
-    setIsLoading(false)
   }, [fastRefresh])
-  return [isLoading, collections]
+  return collections
 }
 
 export const useGetCollectionCurrentSupply = (id: number) => {
   const [data, setData] = useState(0)
-  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    setIsLoading(true)
     async function fetch() {
       const data = await contract.methods.totalSupply(id).call()
       setData(data)
     }
     fetch()
-    setIsLoading(false)
   }, [])
-  return [isLoading, data]
+  return data
 }
 
 export const useGetCollectionMaxSupply = (id: number) => {
   const [data, setData] = useState(0)
-  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    setIsLoading(true)
     async function fetch() {
       const data = await contract.methods.maxSupply(id).call()
       setData(data)
     }
     fetch()
-    setIsLoading(false)
   }, [])
-  return [isLoading, data]
+  return data
 }
 
 export const useGetCollectionCreator = (id: number) => {
   const [data, setData] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    setIsLoading(true)
     async function fetch() {
       const data = await contract.methods.collectionCreator(id).call()
       setData(data)
     }
     fetch()
-    setIsLoading(false)
   }, [])
-  return [isLoading, data]
+  return data
 }
 
 export const useGetUserCollectionBalance = (address: any, id: number) => {

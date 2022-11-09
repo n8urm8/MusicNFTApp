@@ -2,7 +2,9 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { NFTStorage } from 'nft.storage';
 import React, { useContext, useRef, useState } from 'react';
-import { useCreateCollection } from '../utils/contractFunctions';
+import { loadCollectibleToDB } from '../utils/aggregatorFunctions';
+import { useCreateCollection, useGetTotalCollections } from '../utils/contractFunctions';
+import { Collectible } from '../utils/globals/types';
 import { WalletContext } from '../utils/walletContext';
 import { Modal } from './modal';
 import { PaperCheckout } from './paperCheckout';
@@ -36,6 +38,7 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
   const priceInputElement = useRef<HTMLInputElement>(null)
   const supplyInputElement = useRef<HTMLInputElement>(null)
   const audioInputRef = useRef(null)
+  const newID = useGetTotalCollections()
   
 
   const handleFileUploadImage = (event: any) => {
@@ -64,6 +67,30 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
     const metaData = await uploadNFTContent(uploadedFileImage!, uploadedFileAudio!)
     setIpfsData(metaData)
     setLoading(false)
+  }
+
+  const uploadDB = () => {
+    const accountStr = account === null || account === undefined ? '' : account.toString()
+    
+    
+    const dbdata: Collectible = {
+      id: Number(newID),
+      name: songNameInputElement.current!.value,
+      // @ts-ignore
+      coverArt: ipfsData?.data.image.href,
+      // @ts-ignore
+      audio: ipfsData?.data.properties.audio.href,
+      // @ts-ignore
+      description: ipfsData?.data.description,
+      maxSupply: Number(supplyInputElement.current?.value),
+      purchasedAmount: 0,
+      price: (Number(priceInputElement.current?.value) * 10 ** 18).toString(),
+      artistId: accountStr,
+      // owners: []
+    }
+    console.log(dbdata)
+    loadCollectibleToDB(dbdata)
+
   }
 
   const uploadNFTContent = async (inputFileImage: File, inputFileAudio: File) => {
@@ -103,7 +130,6 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
     } finally {
       setTxStatus("Collection Created!")
       setPurchaseCompleted(true)
-      router.push('/')
     }
   }
 
@@ -240,6 +266,7 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
       {metaDataURL && <p><a href={metaDataURL}>Metadata on IPFS</a></p>}
       {txURL && <p><a href={txURL}>See the mint transaction</a></p>}
       {errorMessage}
+      <button className='secondary' onClick={uploadDB}>upload to db</button>
     </div>
 
   )

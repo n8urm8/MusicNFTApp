@@ -10,7 +10,7 @@ interface CollectibleDisplayProps {
 }
 
 export const CollectibleDisplay: React.FC<CollectibleDisplayProps> = ({ signerContract, account }) => {
-  const [isLoading, collections] = useGetTotalCollections()
+  const collections = useGetTotalCollections()
   const length = collections ? Number(collections) - 1 : 0
   const [onlyOwned, setOnlyOwned] = useState(false)
   const [onlyCreated, setOnlyCreated] = useState(false)

@@ -14,6 +14,7 @@ export const Layout: React.FC<FullPageProps> = ({ children }) => {
   const { login } = useContext(WalletContext)
   const { disconnect } = useContext(WalletContext)
   const { showWallet } = useContext(WalletContext)
+  const { requestEmail } = useContext(WalletContext)
  
   const shortAddress = `${account?.slice(0, 4)}...${account?.slice(-4)}`
 
@@ -32,13 +33,16 @@ export const Layout: React.FC<FullPageProps> = ({ children }) => {
             </h1>
           </a>
         </Link>
-        <MagicConnector
-          shortAddress={shortAddress}
-          account={account}
-          login={login}
-          disconnect={disconnect}
-          showWallet={showWallet}
-        />
+        <div className='flex flex-row gap-1'>
+          <MagicConnector
+            shortAddress={shortAddress}
+            account={account}
+            login={login}
+            disconnect={disconnect}
+            showWallet={showWallet}
+            showEmail={requestEmail}
+          />
+        </div>
       </header>
       <main className={styles.pageMain}>{children}</main>
       <footer></footer>

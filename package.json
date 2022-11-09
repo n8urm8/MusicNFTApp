@@ -15,6 +15,7 @@
     "@paperxyz/react-client-sdk": "^0.7.34",
     "@prisma/client": "^4.5.0",
     "bignumber.js": "^9.1.0",
+    "fs": "^0.0.1-security",
     "magic-sdk": "^10.0.0",
     "next": "12.3.1",
     "nft.storage": "^7.0.0",
