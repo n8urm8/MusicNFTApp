@@ -32,8 +32,7 @@ export const MagicConnector: React.FC<MagicConnectorProps> = ({
       }
     } fetchArtist()
   }, [account])
-    
-  console.log(profile)
+
 
   return (
     <>

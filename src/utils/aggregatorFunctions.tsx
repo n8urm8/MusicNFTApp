@@ -79,3 +79,9 @@ export const createArtistProfile = async(artist: Prisma.ArtistCreateInput) => {
   const newProfile = await response.json()
   return await newProfile
 }
+
+export const getAllCollections = async () => {
+  const response = await fetch(`/api/collections`)
+  const collections = await response.json()
+  return await collections
+}

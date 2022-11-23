@@ -26,15 +26,15 @@ const CompleteProfile: NextPage = () => {
     console.log('data to send:', data)
     const newProfile = await createArtistProfile(data)
     console.log('new profile:',newProfile)
-    // if (newProfile !== undefined || newProfile !== null) {
-    //   router.push('/')
-    // }
+    if (newProfile !== undefined || newProfile !== null) {
+      router.push('/')
+    }
   }
 
   return (
     <div className='flex flex-col w-80 m-auto gap-8 mt-4'>
       <h4 className='bold'>Complete Profile</h4>
-      <div onSubmit={handleCreateArtistProfile} className='flex flex-col'>
+      <div className='flex flex-col'>
         <label
           className="text-gray-700 text-sm font-bold mb-2"
           htmlFor="name"
@@ -56,14 +56,14 @@ const CompleteProfile: NextPage = () => {
           Email Address
         </label>
         <input
-          ref={nameRef}
+          ref={emailRef}
           id="email"
           placeholder="Email Address"
           type="email"
           className="mb-3"
           required
         />
-        <button className='primary' type='button'>Create Profile</button>
+        <button onClick={handleCreateArtistProfile} className='primary' type='button'>Create Profile</button>
       </div>
     </div>
   )

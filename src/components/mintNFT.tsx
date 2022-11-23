@@ -66,6 +66,7 @@ const MintNFT: React.FC<MintNFTProps> = ({ contract, account }) => {
     //1. upload NFT content via NFT.storage
     const metaData = await uploadNFTContent(uploadedFileImage!, uploadedFileAudio!)
     setIpfsData(metaData)
+    
     setLoading(false)
   }
 

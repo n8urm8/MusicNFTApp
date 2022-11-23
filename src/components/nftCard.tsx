@@ -1,7 +1,8 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useContext, useEffect, useState } from "react"
-import { useMint } from "../utils/contractFunctions"
+import { purchaseCollectible } from "../utils/aggregatorFunctions"
+import { useGetCollectionURI, useMint } from "../utils/contractFunctions"
 import { Collectible } from "../utils/globals/types"
 import { WalletContext } from "../utils/walletContext"
 import { Modal } from "./modal"
@@ -9,68 +10,55 @@ import { PaperCheckout } from "./paperCheckout"
 import { PlayButton } from "./playButton"
 
 interface NFTCardProps {
-  id: number
+  collection: Collectible
   account: string
   signerContract: any
   owned: boolean
   created: boolean
 }
 
-export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, owned, created }) => {
-  const [collection, setCollection] = useState<Collectible>()
+export const NFTCard: React.FC<NFTCardProps> = ({ signerContract, account, owned, created, collection }) => {
+  // const [collection, setCollection] = useState<Collectible>()
   const { login } = useContext(WalletContext)
   const [purchaseCompleted, setPurchaseCompleted] = useState(false)
   const [loading, setLoading] = useState(true)
   const [minting, setMinting] = useState(false)
   const [coverArtURL, setCoverArtURL] = useState('')
   const [audioURL, setAudioURL] = useState('')
+  const [owners, setOwners] = useState<{}[]>([])
   const price = (Number(collection?.price) / (10 ** 18)).toLocaleString('fullwide', { maximumSignificantDigits: 8 })
-  const collectiblePageURL = `/collection/${id}`
-
-  const balance = 0
-  // this causing error
-  // const balance = useGetUserCollectionBalance(account, id)
+  const collectiblePageURL = `/collection/${collection.id}`
+  console.log('uri:', useGetCollectionURI(0))
+  
   const isCreator = account && account === collection?.artistId
-
-
+  const isOwner = account && owners.includes(account)
 
   const { onMint } = useMint()
   const handleMint = async () => {
     setMinting(true)
     try {
-      await onMint(signerContract, account, Number(price), account, id, 1)
+      await onMint(signerContract, account, Number(price), account, collection.id, 1)
     } catch (error) {
       console.log(error);
     } finally {
       setMinting(false)
       setPurchaseCompleted(true)
+      purchaseCollectible(collection.id, account, 1)
     }
   }
 
   useEffect(() => {
-    async function getCollection() {
-      const response = await fetch(`/api/collections/${id}`)
-      const DBData = await response.json()
-      console.log(DBData)
-      if (DBData !== null) {
-        const data: Collectible = DBData
-        setCollection(data)
-        setCoverArtURL(`https://${data.coverArt.slice(7, 66)}.ipfs.nftstorage.link/${data.coverArt.slice(66)}`)
-        setAudioURL(`https://${data.audio.slice(7, 66)}.ipfs.nftstorage.link/${data.audio.slice(66)}`)
-      }
-      // if (!DBData) {
-      //   console.log('blockchain result: ', blockchainData)
-      //   if (blockchainData) {
-      //     // loadCollectibleToDB(data)
-      //     setCollection(blockchainData)
-      //   }
-      // }
-    }
-    getCollection()
+    setCoverArtURL(`https://${collection.coverArt.slice(7, 66)}.ipfs.nftstorage.link/${collection.coverArt.slice(66)}`)
+    setAudioURL(`https://${collection.audio.slice(7, 66)}.ipfs.nftstorage.link/${collection.audio.slice(66)}`)
+
+
+    setOwners(collection.owners)
+    
     setLoading(false)
   }, [])
+  console.log('owners:', owners)
 
-  if (owned && Number(balance) === 0) return null
+  if (owned && !isOwner) return null
   if (created && !isCreator) return null
   return (<>
     {!loading && collection &&
@@ -82,7 +70,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, o
           </div>
           <div className="flex text-left w-full -mt-2 justify-between">
             <p className="dark">{collection.artistId.toString().slice(0, 6)}...</p>
-            <p className="dark">#{id}</p>
+            <p className="dark">#{collection.id}</p>
           </div>
           <div className="flex justify-between w-full mb-1">
             <Link href={collectiblePageURL}>
@@ -106,7 +94,7 @@ export const NFTCard: React.FC<NFTCardProps> = ({ id, signerContract, account, o
                   {!purchaseCompleted ?
                     (account !== '' ) ?
                       <>
-                        <PaperCheckout onComplete={() => setPurchaseCompleted(true)} account={account} id={id} method="mint" cost={Number(price)}>Buy with CC</PaperCheckout>
+                        <PaperCheckout onComplete={() => { setPurchaseCompleted(true); purchaseCollectible(collection.id, account, 1)}} account={account} id={collection.id} method="mint" cost={Number(price)}>Buy with CC</PaperCheckout>
                         <p>or</p>
                         <button className="primary w-full" disabled={account === '' || account === undefined || minting} onClick={handleMint}>
                           Buy with Crypto
